@@ -32,7 +32,7 @@ public class LoadFitnessFunction extends FitnessFunction{
 		
 		indexes = new int[Vessel.GRID_SIZE];
 		
-		ArrayList<Stack<Container>> repo = vessel.get();
+		ArrayList<Stack<Container>> repo = vessel.getStackList();
 		
 		for (Stack<Container> s: repo){
 			indexes[i] = Math.abs(totalAverage - s.getTotalStackWeight() / Stack.STACK_MAX_SIZE);
@@ -40,7 +40,7 @@ public class LoadFitnessFunction extends FitnessFunction{
 		}
 		
 		for (int j : indexes)
-			eval += indexes[j];
+			eval += j;
 		
 		return eval;
 	}

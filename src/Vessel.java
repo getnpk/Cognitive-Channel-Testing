@@ -27,7 +27,7 @@ public class Vessel {
 		}
 	}
 	
-	public ArrayList<Stack<Container>> get(){
+	public ArrayList<Stack<Container>> getStackList(){
 		return grid;
 	}
 	

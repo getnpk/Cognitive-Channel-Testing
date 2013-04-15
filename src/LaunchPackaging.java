@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -14,17 +15,19 @@ import org.jgap.impl.SwappingMutationOperator;
 
 public class LaunchPackaging {
 
-	private static final int NUMBER_OF_EVOLUTIONS = 5000;
+	private static final int NUMBER_OF_EVOLUTIONS = 2000;
 	
 	// The size of the population (number of chromosomes in the genotype)    
     private static final int SIZE_OF_POPULATION = 50;
     
-    private static Vessel vessel;
-    private static Stack<Container> stack;
-    private static Genotype genotype;
+    private Vessel vessel;
+    private Stack<Container> stack;
+    private Genotype genotype;
     
-    public static void main(String[] args){
- 	   
+    private ArrayList<Container> container;
+    
+    public LaunchPackaging(){
+
         initializeVessel();
         try {
 			genotype = configureJGAP();
@@ -37,16 +40,19 @@ public class LaunchPackaging {
     }
 
 
-	private static void initializeVessel() {
+	private void initializeVessel() {
 		Random random = new Random();
         int randomNumber;
     	vessel = new Vessel();
     	stack = new Stack<Container>();
     	
-    	for (int i=0 ; i< Vessel.GRID_SIZE * Stack.STACK_MAX_SIZE; i++){
+    	container = new ArrayList<Container>();
+    	
+    	for (int i=0 ; i<= Vessel.GRID_SIZE * Stack.STACK_MAX_SIZE; i++){
     	
     		randomNumber = 1 + random.nextInt(100);;
     		Container c = new Container(i, randomNumber);
+    		container.add(c);
     		
     		if (stack.put(c)){
     			
@@ -60,33 +66,37 @@ public class LaunchPackaging {
 	}
     
     
-	private static Genotype configureJGAP() throws InvalidConfigurationException {
+	private Genotype configureJGAP() throws InvalidConfigurationException {
 		
 		Configuration gaConf = new DefaultConfiguration();
 		
-		// Specify a fitness evaluator where lower values means a better fitness
+		/* Specify a fitness evaluator where lower values means a 
+		 * better fitness (MIN)
+		 */
 		Configuration.resetProperty(Configuration.PROPERTY_FITEVAL_INST);
 		gaConf.setFitnessEvaluator(new DeltaFitnessEvaluator());
 
 		/* 
 		 * Use the swapping operator and the size of the 
-		 * chromosome must remain constant
+		 * chromosome must remain constant (MUTATION)
 		 */
 		gaConf.getGeneticOperators().clear();
 		SwappingMutationOperator swapper = new SwappingMutationOperator(gaConf);
 		gaConf.addGeneticOperator(swapper);
 		
-		// Select only the fittest.
+		// Selection of fittest child and population optimisation.
         gaConf.setPreservFittestIndividual(true);
 		gaConf.setKeepPopulationSizeConstant(false);
 		
+		// Set the child chromosome size.
 		gaConf.setPopulationSize(SIZE_OF_POPULATION);
 		
-        // The total number of chromosomes.
+        // The total number of chromosomes in our case.
         int chromeSize = Vessel.GRID_SIZE * Stack.STACK_MAX_SIZE;
 		Genotype genotype;
 		
-		/*Setup the structure with which to evolve the solution of the problem.
+		/* 
+		 * Setup the structure with which to evolve the solution of the problem.
 		 * An IntegerGene is used. This gene represents the index of container?
 		 */
 		IChromosome sampleChromosome = new Chromosome(gaConf, new IntegerGene(gaConf), chromeSize);
@@ -95,10 +105,11 @@ public class LaunchPackaging {
         // Setup the fitness function
 		LoadFitnessFunction fitnessFunction = new LoadFitnessFunction();
 		fitnessFunction.setVessel(vessel);
-		
 		gaConf.setFitnessFunction(fitnessFunction);
 		
-		/* Because the IntegerGenes are initialised randomly, 
+		/* 
+		 * TODO RECHECK
+		 * Because the IntegerGenes are initialised randomly, 
 		 * it is necessary to set the values to the index. Values range from 0 to
 		 * total number of containers.
 		 */
@@ -115,10 +126,56 @@ public class LaunchPackaging {
 		return genotype;
 	}
 	
-	private static void evolve(Genotype genotype) {
+	private void evolve(Genotype genotype) {
 		// TODO Auto-generated method stub
+		double previousFittest = genotype.getFittestChromosome().getFitnessValue();
+		
+		for (int i=0; i< NUMBER_OF_EVOLUTIONS; i++){
+			
+			// Just to know status
+			if (i % 250 == 0)
+				System.out.println("Number of Evolutions: " + i);
+			
+			genotype.evolve();
+			double fittness = genotype.getFittestChromosome().getFitnessValue();
+			
+			if (fittness < previousFittest){
+				previousFittest = fittness;
+			}
+			
+		}
+		IChromosome fittest = genotype.getFittestChromosome();
+		
+		System.out.println("Fittness Value: " + fittest.getFitnessValue());
+		
+		printStack(fittest.getGenes());
+	}
+
+
+	private void printStack(Gene[] genes) {
+		
+		Vessel vessel = new Vessel();
+		Stack<Container> stack = new Stack<Container>();
+		
+		for (Gene gene: genes){
+			int index = (Integer) gene.getAllele();
+			Container c = this.container.get(index);
+			
+			if (stack.put(c)){
+    			
+    		}else{
+    			vessel.put(stack);
+    			stack = new Stack<Container>();
+    			stack.put(c);
+    		}
+		}
+		
+		System.out.println(vessel);
 		
 	}
 
     
+	public static void main(String[] args){
+		new LaunchPackaging();
+	}
 }
