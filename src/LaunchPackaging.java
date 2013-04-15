@@ -75,16 +75,17 @@ public class LaunchPackaging {
 		gaConf.getGeneticOperators().clear();
 		SwappingMutationOperator swapper = new SwappingMutationOperator(gaConf);
 		gaConf.addGeneticOperator(swapper);
-
-        // Select only the fittest.
+		
+		//Select only the fittest.
         gaConf.setPreservFittestIndividual(true);
 		gaConf.setKeepPopulationSizeConstant(false);
-
+		
 		gaConf.setPopulationSize(SIZE_OF_POPULATION);
+		
         // The total number of chromosomes.
         int chromeSize = Vessel.GRID_SIZE * Stack.STACK_MAX_SIZE;
 		Genotype genotype;
-
+		
 		// Setup the structure with which to evolve the solution of the problem.
         // An IntegerGene is used. This gene represents the index of container?
 		IChromosome sampleChromosome = new Chromosome(gaConf, new IntegerGene(gaConf), chromeSize);
@@ -95,7 +96,7 @@ public class LaunchPackaging {
 		fitnessFunction.setVessel(vessel);
 		
 		gaConf.setFitnessFunction(fitnessFunction);
-
+		
 		/* Because the IntegerGenes are initialised randomly, 
 		 * it is necessary to set the values to the index. Values range from 0 to
 		 * total number of containers.
@@ -109,7 +110,7 @@ public class LaunchPackaging {
                 gene.setAllele(j);
             }
         }
-
+        
 		return genotype;
 	}
 	
