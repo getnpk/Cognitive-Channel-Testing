@@ -64,7 +64,7 @@ public class LaunchPackaging {
 		
 		Configuration gaConf = new DefaultConfiguration();
 		
-		//Specify a fitness evaluator where lower values means a better fitness
+		// Specify a fitness evaluator where lower values means a better fitness
 		Configuration.resetProperty(Configuration.PROPERTY_FITEVAL_INST);
 		gaConf.setFitnessEvaluator(new DeltaFitnessEvaluator());
 
@@ -76,7 +76,7 @@ public class LaunchPackaging {
 		SwappingMutationOperator swapper = new SwappingMutationOperator(gaConf);
 		gaConf.addGeneticOperator(swapper);
 		
-		//Select only the fittest.
+		// Select only the fittest.
         gaConf.setPreservFittestIndividual(true);
 		gaConf.setKeepPopulationSizeConstant(false);
 		
@@ -86,8 +86,9 @@ public class LaunchPackaging {
         int chromeSize = Vessel.GRID_SIZE * Stack.STACK_MAX_SIZE;
 		Genotype genotype;
 		
-		// Setup the structure with which to evolve the solution of the problem.
-        // An IntegerGene is used. This gene represents the index of container?
+		/*Setup the structure with which to evolve the solution of the problem.
+		 * An IntegerGene is used. This gene represents the index of container?
+		 */
 		IChromosome sampleChromosome = new Chromosome(gaConf, new IntegerGene(gaConf), chromeSize);
 		gaConf.setSampleChromosome(sampleChromosome);
 		
