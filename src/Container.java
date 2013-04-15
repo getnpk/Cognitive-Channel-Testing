@@ -1,6 +1,6 @@
 /*
  * The component to be loaded.
- * @author: nitin pradeep kumar
+ * @author: Nitin Pradeep Kumar
  * 
  * */
 public class Container implements Comparable<Container>{
@@ -21,6 +21,14 @@ public class Container implements Comparable<Container>{
 		this.weight = newWeight;
 	}
 
+	public int getId(){
+		return this.id;
+	}
+	
+	public void setId(int id){
+		this.id = id;
+	}
+	
 	@Override
 	public int compareTo(Container other) {
 		//Highest weight first

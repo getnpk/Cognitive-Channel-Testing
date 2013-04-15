@@ -31,6 +31,17 @@ public class Vessel {
 		return grid;
 	}
 	
+	/*
+	 * Get the entire weight of Vessel.
+	 * */
+	public int getTotalVesselWeight(){
+		int total = 0;
+		for (Stack<Container> s : grid){
+			total += s.getTotalStackWeight();
+		}
+		return total;
+	}
+	
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Vessel Contents: ");
